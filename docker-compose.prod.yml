@@ -160,12 +160,9 @@ services:
       - "traefik.http.routers.strapi.entrypoints=websecure"
       - "traefik.http.routers.strapi.tls.certresolver=letsencrypt"
       - "traefik.http.services.strapi.loadbalancer.server.port=1337"
+    # Disable healthcheck so Traefik doesn't filter this container
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1337/_health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 90s
+      test: ["NONE"]
     networks:
       - clayworks-network
 
