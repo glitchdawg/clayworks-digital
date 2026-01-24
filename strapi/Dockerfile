@@ -28,8 +28,7 @@ COPY . .
 ENV NODE_ENV=production
 RUN npm run build
 
-# Prune dev dependencies to reduce size (optional but recommended)
-RUN npm prune --production
+# Note: Don't prune - Strapi v5 needs @strapi/admin in node_modules to serve admin panel
 
 # ==============================================================================
 # Runner Stage
