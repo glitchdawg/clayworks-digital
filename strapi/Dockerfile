@@ -51,11 +51,15 @@ RUN groupadd --system --gid 1001 strapi && \
 COPY --from=builder /opt/app/node_modules ./node_modules
 COPY --from=builder /opt/app/dist ./dist
 COPY --from=builder /opt/app/public ./public
+COPY --from=builder /opt/app/config ./config
+COPY --from=builder /opt/app/src ./src
 COPY --from=builder /opt/app/package.json ./package.json
 COPY --from=builder /opt/app/favicon.png ./favicon.png
 
-# Ensure uploads directory exists and has correct permissions
-RUN mkdir -p public/uploads && chown -R strapi:strapi /opt/app
+# Create home directory for strapi user and ensure correct permissions
+RUN mkdir -p /home/strapi && \
+    mkdir -p public/uploads && \
+    chown -R strapi:strapi /opt/app /home/strapi
 
 USER strapi
 
