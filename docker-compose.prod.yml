@@ -1,0 +1,258 @@
+# ClayWorks Production Docker Compose
+# Hetzner CX52 Deployment with Traefik + Crowdsec
+
+services:
+  # =============================================================================
+  # REVERSE PROXY - Traefik with Let's Encrypt
+  # =============================================================================
+  traefik:
+    image: traefik:v3.0
+    container_name: clayworks-traefik
+    restart: unless-stopped
+    command:
+      # API and Dashboard
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+      # Entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # HTTP to HTTPS redirect
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # Let's Encrypt
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      # Docker provider
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=clayworks-network"
+      # Logging
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/var/log/traefik/access.log"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+      - traefik_logs:/var/log/traefik
+    labels:
+      # Dashboard
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}"
+    networks:
+      - clayworks-network
+    depends_on:
+      - crowdsec
+
+  # =============================================================================
+  # WAF - Crowdsec Security
+  # =============================================================================
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: clayworks-crowdsec
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors"
+      GID: "${GID:-1000}"
+    volumes:
+      - crowdsec_config:/etc/crowdsec
+      - crowdsec_data:/var/lib/crowdsec/data
+      - traefik_logs:/var/log/traefik:ro
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+    networks:
+      - clayworks-network
+
+  crowdsec-bouncer:
+    image: fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: clayworks-bouncer
+    restart: unless-stopped
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_KEY}
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+    depends_on:
+      - crowdsec
+    networks:
+      - clayworks-network
+
+  # =============================================================================
+  # DATABASE - PostgreSQL
+  # =============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: clayworks-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clayworks-network
+
+  # =============================================================================
+  # CACHE - Redis
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: clayworks-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clayworks-network
+
+  # =============================================================================
+  # CMS - Strapi
+  # =============================================================================
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile
+    container_name: clayworks-strapi
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 1337
+      PUBLIC_URL: https://cms.${DOMAIN}
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_DB}
+      DATABASE_USERNAME: ${POSTGRES_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_SSL: "false"
+      NODE_ENV: production
+      APP_KEYS: ${APP_KEYS}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: https://${DOMAIN}
+    volumes:
+      - strapi_uploads:/opt/app/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.strapi.rule=Host(`cms.${DOMAIN}`)"
+      - "traefik.http.routers.strapi.entrypoints=websecure"
+      - "traefik.http.routers.strapi.tls.certresolver=letsencrypt"
+      - "traefik.http.services.strapi.loadbalancer.server.port=1337"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    networks:
+      - clayworks-network
+
+  # =============================================================================
+  # MIDDLEWARE - Go API Gateway
+  # =============================================================================
+  middleware:
+    build:
+      context: ./middleware
+      dockerfile: Dockerfile
+    container_name: clayworks-middleware
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+      PORT: 8080
+      STRAPI_URL: http://strapi:1337
+      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
+      REDIS_URL: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      CACHE_TTL: ${CACHE_TTL:-5m}
+      API_KEY: ${API_KEY}
+      RATE_LIMIT_REQUESTS: ${RATE_LIMIT_REQUESTS:-100}
+      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-1m}
+      ALLOWED_ORIGINS: https://${DOMAIN},https://cms.${DOMAIN}
+    depends_on:
+      - strapi
+      - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.middleware.rule=Host(`api.${DOMAIN}`)"
+      - "traefik.http.routers.middleware.entrypoints=websecure"
+      - "traefik.http.routers.middleware.tls.certresolver=letsencrypt"
+      - "traefik.http.services.middleware.loadbalancer.server.port=8080"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - clayworks-network
+
+  # =============================================================================
+  # FRONTEND - Next.js
+  # =============================================================================
+  frontend:
+    build:
+      context: ./clayworks-main
+      dockerfile: Dockerfile
+    container_name: clayworks-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_MIDDLEWARE_URL: https://api.${DOMAIN}
+      NEXT_PUBLIC_STRAPI_URL: https://cms.${DOMAIN}
+      NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+      STRAPI_API_KEY: ${API_KEY}
+    depends_on:
+      - middleware
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      # www to non-www redirect
+      - "traefik.http.routers.frontend-www.rule=Host(`www.${DOMAIN}`)"
+      - "traefik.http.routers.frontend-www.entrypoints=websecure"
+      - "traefik.http.routers.frontend-www.middlewares=redirect-www"
+      - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\.(.*)"
+      - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - clayworks-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  strapi_uploads:
+  traefik_letsencrypt:
+  traefik_logs:
+  crowdsec_config:
+  crowdsec_data:
+
+networks:
+  clayworks-network:
+    driver: bridge

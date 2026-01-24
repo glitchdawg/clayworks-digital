@@ -1,0 +1,9 @@
+.git
+.gitignore
+README.md
+*.md
+Makefile
+.env
+.env.*
+!.env.example
+vendor/

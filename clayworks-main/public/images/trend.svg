@@ -1,0 +1,10 @@
+<!-- Trend Micro Logo SVG -->
+<svg width="120" height="30" viewBox="0 0 120 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Red T/Wave symbol -->
+  <path d="M8 6C8 4.89543 8.89543 4 10 4H14C15.1046 4 16 4.89543 16 6V8C16 9.10457 15.1046 10 14 10H12V22C12 23.1046 11.1046 24 10 24C8.89543 24 8 23.1046 8 22V6Z" fill="#E53E3E"/>
+  <path d="M18 6C18 4.89543 18.8954 4 20 4H24C25.1046 4 26 4.89543 26 6V8C26 9.10457 25.1046 10 24 10H22V22C22 23.1046 21.1046 24 20 24C18.8954 24 18 23.1046 18 22V6Z" fill="#E53E3E"/>
+  
+  <!-- Text -->
+  <text x="32" y="18" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#374151">TREND</text>
+  <text x="70" y="18" font-family="Arial, sans-serif" font-size="12" font-weight="normal" fill="#6B7280">MICRO</text>
+</svg>

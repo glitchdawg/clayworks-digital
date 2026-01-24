@@ -1,0 +1,12 @@
+{
+    "name": "clayworks-scripts",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "migrate": "ts-node migrate-content.ts"
+    },
+    "dependencies": {
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.3"
+    }
+}

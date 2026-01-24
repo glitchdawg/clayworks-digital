@@ -1,0 +1,9 @@
+# Crowdsec Acquisition Configuration
+# Reads Traefik access logs for threat detection
+
+filenames:
+  - /var/log/traefik/access.log
+labels:
+  type: traefik
+---
+# Additional log sources can be added here for other services
