@@ -225,17 +225,19 @@ services:
       - middleware
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)"
+      # Main router for the frontend
+      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend.service=frontend"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-      # www to non-www redirect
+      # WWW redirect router
       - "traefik.http.routers.frontend-www.rule=Host(`www.${DOMAIN}`)"
       - "traefik.http.routers.frontend-www.entrypoints=websecure"
+      - "traefik.http.routers.frontend-www.tls.certresolver=letsencrypt"
       - "traefik.http.routers.frontend-www.middlewares=redirect-www"
-      - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\.(.*)"
-      - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://$${1}"
-      - "traefik.http.middlewares.redirect-www.redirectregex.permanent=true"
+      - "traefik.http.middlewares.redirect-www.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-www.redirectscheme.permanent=true"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
