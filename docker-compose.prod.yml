@@ -6,7 +6,7 @@ services:
   # REVERSE PROXY - Traefik with Let's Encrypt
   # =============================================================================
   traefik:
-    image: traefik:v3.2
+    image: traefik:latest
     container_name: clayworks-traefik
     restart: unless-stopped
     command:
