@@ -239,7 +239,9 @@ services:
       - "traefik.http.routers.frontend-www.middlewares=redirect-www"
       - "traefik.http.middlewares.redirect-www.redirectscheme.scheme=https"
       - "traefik.http.middlewares.redirect-www.redirectscheme.permanent=true"
-    # Note: Healthcheck removed - Traefik v3 filters unhealthy containers
+    # Disable healthcheck so Traefik doesn't filter this container
+    healthcheck:
+      test: ["NONE"]
     networks:
       - clayworks-network
 
