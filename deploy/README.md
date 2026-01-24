@@ -1,17 +1,23 @@
 # ClayWorks Hetzner Deployment Guide
 
-Complete step-by-step guide to deploy ClayWorks on Hetzner CX52.
+Complete step-by-step guide to deploy ClayWorks on Hetzner.
+
+---
 
 ## Prerequisites
 
-- ✅ Hetzner Cloud account with CX52 server
-- ✅ Hostinger domain with DNS access
-- ✅ GitHub repository with your code
-- ✅ Local machine with SSH client and `openssl`
+Before you begin, make sure you have:
+
+- [ ] Hetzner Cloud account
+- [ ] A domain with DNS access (e.g., Hostinger, Cloudflare, GoDaddy)
+- [ ] SSH client on your local machine
+- [ ] `openssl` installed locally (for generating secrets)
 
 ---
 
 ## Quick Reference
+
+After deployment, your services will be available at:
 
 | Service | URL | Purpose |
 |---------|-----|---------|
@@ -29,13 +35,50 @@ Complete step-by-step guide to deploy ClayWorks on Hetzner CX52.
 3. **Add Server:**
    - **Location**: Nuremberg (or your preferred)
    - **Image**: Ubuntu 22.04
-   - **Type**: CX52 (16 vCPU, 32 GB RAM)
-   - **SSH Key**: Add your public key
-4. **Note the server IP address** - you'll need this for DNS
+   - **Type**: CX52 (16 vCPU, 32 GB RAM) — or smaller for testing
+   - **SSH Key**: Add your public key from your local machine
+
+4. **Copy the server IP address** — you'll need this for everything below
+
+> [!TIP]
+> If you don't have an SSH key yet, generate one on your local machine:
+> ```bash
+> ssh-keygen -t ed25519 -C "your-email@example.com"
+> cat ~/.ssh/id_ed25519.pub  # Copy this to Hetzner
+> ```
 
 ---
 
-## Step 2: Initial Server Setup
+## Step 2: Configure DNS
+
+> [!IMPORTANT]
+> **Do this step BEFORE deploying!** DNS can take 5-30 minutes to propagate. Setting it up first means SSL certificates will work when you deploy.
+
+Go to your domain provider's DNS settings and add these A records:
+
+| Type | Name | Value | TTL |
+|------|------|-------|-----|
+| A | `app` | YOUR_SERVER_IP | 3600 |
+| A | `cms.app` | YOUR_SERVER_IP | 3600 |
+| A | `api.app` | YOUR_SERVER_IP | 3600 |
+| A | `traefik.app` | YOUR_SERVER_IP | 3600 |
+
+**Example:** If your domain is `clayworks.io` and server IP is `65.108.123.45`:
+- `app.clayworks.io` → `65.108.123.45`
+- `cms.app.clayworks.io` → `65.108.123.45`
+- etc.
+
+**Verify DNS propagation** (wait until this works before Step 5):
+```bash
+dig app.yourdomain.com +short
+# Should return your server IP
+```
+
+---
+
+## Step 3: Setup Server
+
+SSH into your server and run the setup script:
 
 ```bash
 # SSH into server as root
@@ -47,151 +90,110 @@ chmod +x setup-server.sh
 ./setup-server.sh
 ```
 
-**What this does:**
-- Installs Docker & Docker Compose
-- Configures firewall (UFW) - allows only SSH, HTTP, HTTPS
-- Creates `deploy` user with Docker access
-- Configures fail2ban for SSH protection
-- Disables root SSH login
+**What this installs:**
+- Docker & Docker Compose
+- UFW firewall (allows SSH, HTTP, HTTPS only)
+- fail2ban (blocks brute-force attacks)
+- Creates `/opt/clayworks` directory
+
+> [!NOTE]
+> This does NOT disable root login. You can optionally harden SSH later (see [Security Hardening](#optional-security-hardening) at the end).
 
 ---
 
-## Step 3: DNS Configuration (Hostinger)
+## Step 4: Prepare Environment Variables
 
-1. Go to Hostinger → Domains → DNS Zone
-2. **Add A records** pointing to your Hetzner server IP:
-
-| Type | Name | Value | TTL |
-|------|------|-------|-----|
-| A | app | YOUR_SERVER_IP | 3600 |
-| A | cms.app | YOUR_SERVER_IP | 3600 |
-| A | api.app | YOUR_SERVER_IP | 3600 |
-| A | traefik.app | YOUR_SERVER_IP | 3600 |
-| A | www.app | YOUR_SERVER_IP | 3600 |
-
-⚠️ **Wait 5-30 minutes** for DNS propagation before proceeding.
-
-**Verify DNS:**
-```bash
-dig app.yourdomain.com +short
-# Should return your server IP
-```
-
----
-
-## Step 4: Generate SSH Key for GitHub Actions
+> [!CAUTION]
+> **Read this entire section before editing!** You'll need to generate secrets and understand each variable.
 
 ```bash
-# On your LOCAL machine (not the server)
-ssh-keygen -t ed25519 -C "github-actions-deploy" -f ~/.ssh/clayworks-deploy
-
-# Copy public key to server
-ssh-copy-id -i ~/.ssh/clayworks-deploy.pub deploy@YOUR_SERVER_IP
-
-# Test connection
-ssh -i ~/.ssh/clayworks-deploy deploy@YOUR_SERVER_IP
-```
-
----
-
-## Step 5: Clone Repository on Server
-
-```bash
-# SSH as deploy user
-ssh deploy@YOUR_SERVER_IP
-
-# Clone repository
-git clone https://github.com/YOUR_ORG/clayworks.git /opt/clayworks
+# Clone the repository
 cd /opt/clayworks
-```
+git clone https://github.com/YOUR_ORG/clayworks.git .
 
----
-
-## Step 6: Configure Environment Variables
-
-```bash
-cd /opt/clayworks
-
-# Copy the example file
+# Create your environment file
 cp .env.production.example .env.production
-
-# Edit the file
 nano .env.production
 ```
 
-### Required Variables
+### 4.1: Domain Settings
 
-#### Domain Configuration
 ```env
-# Your actual domain (without https://)
+# Your domain (without https://)
 DOMAIN=app.yourdomain.com
 
-# Email for Let's Encrypt SSL certificate notifications
-# Use an email you monitor - only receives SSL expiry warnings
-ACME_EMAIL=admin@yourcompany.com
+# Email for SSL certificate expiry notifications
+ACME_EMAIL=your-email@example.com
 ```
 
-#### Generate Secrets (run these commands locally)
+### 4.2: Generate Secrets
+
+Run this command **on your local machine** for each secret you need:
 ```bash
-# Generate each secret with:
 openssl rand -base64 32
-
-# Example output: K8x9mZ2pL5qR7sT1vW3yA6cE8gI0jM4nO
 ```
 
-**Fill in these values:**
+Fill in these values in `.env.production`:
 ```env
-POSTGRES_PASSWORD=<generated>
-REDIS_PASSWORD=<generated>
-APP_KEYS=<generated1>,<generated2>,<generated3>,<generated4>
-ADMIN_JWT_SECRET=<generated>
-API_TOKEN_SALT=<generated>
-TRANSFER_TOKEN_SALT=<generated>
-JWT_SECRET=<generated>
-API_KEY=<generated>
+POSTGRES_PASSWORD=<paste-generated-secret>
+REDIS_PASSWORD=<paste-generated-secret>
+APP_KEYS=<secret1>,<secret2>,<secret3>,<secret4>
+ADMIN_JWT_SECRET=<paste-generated-secret>
+API_TOKEN_SALT=<paste-generated-secret>
+TRANSFER_TOKEN_SALT=<paste-generated-secret>
+JWT_SECRET=<paste-generated-secret>
+API_KEY=<paste-generated-secret>
 ```
 
-#### Traefik Dashboard Auth
+### 4.3: Traefik Dashboard Password
+
+Generate a password hash:
 ```bash
-# Generate password hash (replace 'admin' and 'yourpassword')
-htpasswd -nb admin yourpassword
-
-# Output: admin:$apr1$xyz123$hashedpassword
-# Double the $ signs for docker-compose:
-# admin:$$apr1$$xyz123$$hashedpassword
+# On the server (htpasswd was installed by setup script)
+htpasswd -nb admin your-secure-password
 ```
 
+Output: `admin:$apr1$xyz123$hashedpassword`
+
+**Important:** Double the `$` signs when pasting into `.env.production`:
 ```env
 TRAEFIK_DASHBOARD_AUTH=admin:$$apr1$$xyz123$$hashedpassword
 ```
 
-#### Leave Blank Initially (set after first deploy)
+### 4.4: Leave These Blank For Now
+
+These tokens are generated AFTER deployment:
 ```env
-# Generate after Strapi is running (Step 8)
+# Set in Step 6 after Strapi is running
 STRAPI_API_TOKEN=
 
-# Generate after Crowdsec is running (Step 9)
+# Set in Step 7 after Crowdsec is running
 CROWDSEC_BOUNCER_KEY=
 ```
 
 ---
 
-## Step 7: First Deployment
+## Step 5: Deploy
+
+> [!IMPORTANT]
+> Make sure DNS is propagated (Step 2) before deploying! Run `dig app.yourdomain.com +short` — if it doesn't return your server IP, wait longer.
 
 ```bash
 cd /opt/clayworks
 
-# Build and start all services (this takes 10-15 minutes first time)
+# Build and start all services (takes 10-15 minutes first time)
 docker compose -f docker-compose.prod.yml up -d --build
 
-# Watch logs (Ctrl+C to exit)
+# Watch the logs to see progress (Ctrl+C to exit)
 docker compose -f docker-compose.prod.yml logs -f
+```
 
-# Check all services are running
+**Wait for all services to show "Up":**
+```bash
 docker compose -f docker-compose.prod.yml ps
 ```
 
-**Expected output:**
+Expected output:
 ```
 NAME                    STATUS    PORTS
 clayworks-frontend      Up        3000/tcp
@@ -206,107 +208,100 @@ clayworks-bouncer       Up
 
 ---
 
-## Step 8: Create Strapi API Token (REQUIRED)
+## Step 6: Create Strapi API Token
 
-⚠️ **This step is MANUAL and REQUIRED for the site to work!**
+> [!WARNING]
+> **The frontend will NOT work until you complete this step!** The middleware needs this token to fetch content from Strapi.
 
-1. **Open Strapi Admin:**
+1. **Open Strapi Admin** in your browser:
    ```
    https://cms.app.yourdomain.com/admin
    ```
 
-2. **Create admin account** (first-time setup)
-   - Email: your email
-   - Password: strong password
-   - First/Last name
+2. **Create your admin account** (first-time setup):
+   - Email, password, name
 
-3. **Create API Token:**
+3. **Generate API Token:**
    - Go to: **Settings** → **API Tokens** → **Create new API Token**
    - Name: `Frontend Access`
    - Token type: **Full access**
    - Click **Save**
-   - **Copy the token** (you won't see it again!)
+   - **Copy the token immediately** — you won't see it again!
 
 4. **Add token to environment:**
    ```bash
    nano /opt/clayworks/.env.production
    
-   # Add the token:
+   # Paste your token:
    STRAPI_API_TOKEN=your_copied_token_here
    ```
 
-5. **Restart middleware:**
+5. **Restart middleware to pick up the token:**
    ```bash
    docker compose -f docker-compose.prod.yml restart middleware
    ```
 
 ---
 
-## Step 9: Configure Crowdsec Bouncer
+## Step 7: Configure Crowdsec (Security)
+
+Crowdsec protects your site from malicious traffic. Generate its API key:
 
 ```bash
 # Generate bouncer API key
 docker exec clayworks-crowdsec cscli bouncers add traefik-bouncer
 
-# Copy the displayed key and add to .env.production:
+# Copy the displayed key
+```
+
+Add to environment:
+```bash
 nano /opt/clayworks/.env.production
 
-# Add:
+# Paste:
 CROWDSEC_BOUNCER_KEY=your_generated_key_here
+```
 
-# Restart bouncer
+Restart the bouncer:
+```bash
 docker compose -f docker-compose.prod.yml restart crowdsec-bouncer
 ```
 
 ---
 
-## Step 10: Setup GitHub Actions CI/CD
+## Step 8: Verify Deployment
 
-Add these secrets to your GitHub repository:
-**Settings → Secrets and variables → Actions → New repository secret**
+### Check all URLs work:
 
-| Secret Name | Value |
-|-------------|-------|
-| `HETZNER_HOST` | Your server IP (e.g., `65.108.xxx.xxx`) |
-| `HETZNER_USER` | `deploy` |
-| `HETZNER_SSH_KEY` | Contents of `~/.ssh/clayworks-deploy` (private key) |
-| `DEPLOY_PATH` | `/opt/clayworks` |
-| `DOMAIN` | `app.yourdomain.com` |
-
-**To copy private key:**
 ```bash
-cat ~/.ssh/clayworks-deploy
-# Copy entire output including BEGIN and END lines
-```
-
----
-
-## Step 11: Verify Everything Works
-
-### Check URLs
-```bash
-# Frontend
+# Frontend (should return 200)
 curl -I https://app.yourdomain.com
 
-# API Health
+# API health check
 curl https://api.app.yourdomain.com/health
 
-# Strapi Health
+# Strapi health check
 curl https://cms.app.yourdomain.com/_health
 ```
 
-### Check SSL Certificates
+### Check SSL certificates:
 ```bash
-# Should show Let's Encrypt certificate
 openssl s_client -connect app.yourdomain.com:443 -servername app.yourdomain.com < /dev/null 2>/dev/null | openssl x509 -noout -issuer -dates
 ```
 
-### Access Traefik Dashboard
+Should show "Let's Encrypt" as issuer.
+
+### Access Traefik Dashboard:
 ```
 https://traefik.app.yourdomain.com/dashboard/
-# Username: admin
-# Password: what you set in TRAEFIK_DASHBOARD_AUTH
 ```
+Login with the credentials you set in Step 4.3.
+
+---
+
+## ✅ Deployment Complete!
+
+Your site should now be live at `https://app.yourdomain.com`
 
 ---
 
@@ -354,52 +349,96 @@ cat backup.sql | docker exec -i clayworks-postgres psql -U strapi -d clayworks_s
 ## Troubleshooting
 
 ### SSL Certificate Not Working
-```bash
-# Check Traefik logs
-docker logs clayworks-traefik
 
-# Common issues:
-# - DNS not propagated yet (wait longer)
-# - Firewall blocking port 80/443
-# - Rate limited by Let's Encrypt (wait 1 hour)
+```bash
+docker logs clayworks-traefik
 ```
 
+**Common causes:**
+- DNS not propagated yet → wait longer, verify with `dig`
+- Firewall blocking ports → check `ufw status`
+- Let's Encrypt rate limit → wait 1 hour
+
 ### Service Won't Start
+
 ```bash
-# Check specific service logs
-docker compose -f docker-compose.prod.yml logs SERVICE_NAME
+# Check logs for the failing service
+docker compose -f docker-compose.prod.yml logs strapi
 
 # Check container status
 docker compose -f docker-compose.prod.yml ps
 ```
 
-### Check Environment Variables
-```bash
-docker compose -f docker-compose.prod.yml config
-```
+### Frontend Shows Errors / No Content
 
-### Reset Everything
+- Did you complete Step 6 (Strapi API Token)?
+- Check middleware logs: `docker compose -f docker-compose.prod.yml logs middleware`
+
+### Reset Everything (Nuclear Option)
+
 ```bash
-docker compose -f docker-compose.prod.yml down -v  # WARNING: Deletes all data!
+# WARNING: This deletes ALL data including database!
+docker compose -f docker-compose.prod.yml down -v
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ---
 
-## Security Checklist
+## Optional: GitHub Actions CI/CD
 
-- [ ] Changed all default passwords in `.env.production`
-- [ ] Strapi API token created and added
-- [ ] Crowdsec bouncer key generated and added
-- [ ] Traefik dashboard has strong password
-- [ ] SSH root login disabled
-- [ ] UFW firewall enabled
-- [ ] fail2ban running
-- [ ] SSL certificates verified working
+To enable automatic deployments when you push to main:
+
+1. **Create a deploy SSH key** (on your local machine):
+   ```bash
+   ssh-keygen -t ed25519 -C "github-actions" -f ~/.ssh/clayworks-deploy
+   ssh-copy-id -i ~/.ssh/clayworks-deploy.pub root@YOUR_SERVER_IP
+   ```
+
+2. **Add secrets to GitHub** (Settings → Secrets → Actions):
+
+   | Secret Name | Value |
+   |-------------|-------|
+   | `HETZNER_HOST` | Your server IP |
+   | `HETZNER_USER` | `root` |
+   | `HETZNER_SSH_KEY` | Contents of `~/.ssh/clayworks-deploy` (private key) |
+   | `DEPLOY_PATH` | `/opt/clayworks` |
+   | `DOMAIN` | `app.yourdomain.com` |
 
 ---
 
-## Architecture Reference
+## Optional: Security Hardening
+
+> [!NOTE]
+> This is **optional** and can be done later. Only proceed if you want to disable root SSH login.
+
+### Create Deploy User with SSH Access
+
+```bash
+# On your LOCAL machine - generate deploy key
+ssh-keygen -t ed25519 -C "deploy-user" -f ~/.ssh/clayworks-deploy
+
+# Copy to server
+ssh-copy-id -i ~/.ssh/clayworks-deploy.pub deploy@YOUR_SERVER_IP
+
+# Test login (MUST work before proceeding!)
+ssh -i ~/.ssh/clayworks-deploy deploy@YOUR_SERVER_IP
+sudo whoami  # Should output: root
+```
+
+### Disable Root Login
+
+Only run this AFTER confirming you can SSH as `deploy`:
+
+```bash
+ssh -i ~/.ssh/clayworks-deploy deploy@YOUR_SERVER_IP
+sudo ./setup-server.sh --harden
+```
+
+This disables root SSH login. You can still `sudo su` to become root after logging in as `deploy`.
+
+---
+
+## Architecture
 
 ```
 Internet
@@ -407,9 +446,9 @@ Internet
 Crowdsec WAF (blocks malicious IPs)
     ↓
 Traefik (SSL termination, routing)
-    ├── app.domain.com → Next.js (port 3000)
-    ├── api.domain.com → Go Middleware (port 8080)
-    └── cms.domain.com → Strapi (port 1337)
-                              ↓
-                         PostgreSQL
+    ├── app.domain.com      → Next.js Frontend (port 3000)
+    ├── api.domain.com      → Go Middleware (port 8080)
+    └── cms.domain.com      → Strapi CMS (port 1337)
+                                  ↓
+                             PostgreSQL + Redis
 ```

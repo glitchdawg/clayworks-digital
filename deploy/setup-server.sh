@@ -1,11 +1,63 @@
 #!/bin/bash
 # ClayWorks Hetzner Server Setup Script
 # Run this on a fresh Ubuntu 22.04 Hetzner server
+#
+# USAGE:
+#   Phase 1 (safe): ./setup-server.sh
+#   Phase 2 (after SSH keys): ./setup-server.sh --harden
 
 set -e
 
+# Check if running hardening phase
+if [ "$1" = "--harden" ]; then
+    echo "=========================================="
+    echo "ClayWorks Server Hardening (Phase 2)"
+    echo "=========================================="
+    
+    # Safety check: Ensure deploy user has SSH keys before disabling root
+    if [ ! -f /home/deploy/.ssh/authorized_keys ] || [ ! -s /home/deploy/.ssh/authorized_keys ]; then
+        echo ""
+        echo "❌ ERROR: No SSH keys found for deploy user!"
+        echo ""
+        echo "You MUST add your SSH public key before hardening:"
+        echo "  1. On your LOCAL machine, run:"
+        echo "     ssh-copy-id -i ~/.ssh/your_key.pub deploy@YOUR_SERVER_IP"
+        echo "  2. Test that you can login as deploy:"
+        echo "     ssh deploy@YOUR_SERVER_IP"
+        echo "  3. Then run this script again with --harden"
+        echo ""
+        exit 1
+    fi
+    
+    # Verify deploy user has sudo access
+    if ! groups deploy | grep -q sudo; then
+        echo "❌ ERROR: deploy user is not in sudo group!"
+        echo "Run: usermod -aG sudo deploy"
+        exit 1
+    fi
+    
+    echo "✅ Deploy user has SSH keys configured"
+    echo "✅ Deploy user has sudo access"
+    echo ""
+    echo ">>> Hardening SSH (disabling root login)..."
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+    sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+    sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+    systemctl restart sshd
+    
+    echo ""
+    echo "=========================================="
+    echo "✅ SSH Hardening Complete!"
+    echo ""
+    echo "Root login is now DISABLED."
+    echo "Use: ssh deploy@YOUR_SERVER_IP"
+    echo "=========================================="
+    exit 0
+fi
+
 echo "=========================================="
-echo "ClayWorks Server Setup"
+echo "ClayWorks Server Setup (Phase 1)"
 echo "=========================================="
 
 # Update system
@@ -38,15 +90,18 @@ systemctl start docker
 
 # Create deployment user
 echo ">>> Creating deploy user..."
-useradd -m -s /bin/bash -G docker deploy
+if id deploy &>/dev/null; then
+    echo "Deploy user already exists, skipping..."
+else
+    useradd -m -s /bin/bash -G docker,sudo deploy
+    echo "deploy ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/deploy
+fi
 mkdir -p /home/deploy/.ssh
 chmod 700 /home/deploy/.ssh
+chown -R deploy:deploy /home/deploy/.ssh
 
-# Configure SSH (disable password auth)
-echo ">>> Hardening SSH..."
-sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
-systemctl restart sshd
+# NOTE: SSH hardening is done separately with --harden flag
+# This prevents lockouts if you forget to set up SSH keys first
 
 # Configure firewall
 echo ">>> Configuring firewall..."
@@ -82,11 +137,24 @@ cat > /etc/logrotate.d/clayworks << 'EOF'
 EOF
 
 echo "=========================================="
-echo "Server setup complete!"
+echo "✅ Phase 1 Complete!"
+echo "=========================================="
 echo ""
-echo "NEXT STEPS:"
-echo "1. Add your SSH public key to /home/deploy/.ssh/authorized_keys"
-echo "2. Clone the repo: su - deploy -c 'git clone <REPO_URL> /opt/clayworks'"
-echo "3. Copy .env.production.example to .env.production and configure"
-echo "4. Run: docker compose -f docker-compose.prod.yml up -d"
+echo "⚠️  CRITICAL NEXT STEPS (in order!):"
+echo ""
+echo "1. ADD YOUR SSH KEY (from your LOCAL machine):"
+echo "   ssh-copy-id -i ~/.ssh/your_key.pub deploy@YOUR_SERVER_IP"
+echo ""
+echo "2. TEST LOGIN as deploy user:"
+echo "   ssh deploy@YOUR_SERVER_IP"
+echo ""
+echo "3. HARDEN SSH (disables root login - only after step 2 works!):"
+echo "   sudo ./setup-server.sh --harden"
+echo ""
+echo "4. Clone the repo:"
+echo "   git clone <REPO_URL> /opt/clayworks"
+echo ""
+echo "5. Configure and deploy:"
+echo "   cp .env.production.example .env.production"
+echo "   docker compose -f docker-compose.prod.yml up -d"
 echo "=========================================="
