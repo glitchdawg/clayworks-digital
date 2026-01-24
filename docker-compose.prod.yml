@@ -12,7 +12,7 @@ services:
     command:
       # API and Dashboard
       - "--api.dashboard=true"
-      - "--api.insecure=false"
+      - "--api.insecure=true"
       # Entrypoints
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
@@ -27,13 +27,14 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=clayworks_clayworks-network"
-      # Logging
-      - "--log.level=INFO"
+      # Logging - DEBUG for troubleshooting
+      - "--log.level=DEBUG"
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/traefik/access.log"
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_letsencrypt:/letsencrypt
