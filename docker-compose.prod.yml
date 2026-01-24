@@ -26,7 +26,7 @@ services:
       # Docker provider
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=clayworks-network"
+      - "--providers.docker.network=clayworks_clayworks-network"
       # Logging
       - "--log.level=INFO"
       - "--accesslog=true"
