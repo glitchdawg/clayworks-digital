@@ -1,0 +1,56 @@
+{
+    "kind": "singleType",
+    "collectionName": "site_settings",
+    "info": {
+        "singularName": "site-setting",
+        "pluralName": "site-settings",
+        "displayName": "Site Settings",
+        "description": "Global site configuration"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "siteName": {
+            "type": "string",
+            "required": true,
+            "default": "ClayWorks"
+        },
+        "tagline": {
+            "type": "string"
+        },
+        "contactPhone": {
+            "type": "string"
+        },
+        "contactPhoneDisplay": {
+            "type": "string"
+        },
+        "contactEmail": {
+            "type": "email"
+        },
+        "logo": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "favicon": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "socialLinks": {
+            "type": "json"
+        },
+        "footerText": {
+            "type": "string"
+        },
+        "googleAnalyticsId": {
+            "type": "string"
+        }
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "kind": "collectionType",
+    "collectionName": "faq_categories",
+    "info": {
+        "singularName": "faq-category",
+        "pluralName": "faq-categories",
+        "displayName": "FAQ Category",
+        "description": "Categories for FAQs"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "name",
+            "required": true
+        },
+        "order": {
+            "type": "integer",
+            "default": 0
+        },
+        "faqs": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::faq.faq",
+            "mappedBy": "category"
+        }
+    }
+}

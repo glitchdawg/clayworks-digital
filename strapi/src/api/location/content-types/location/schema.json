@@ -1,0 +1,86 @@
+{
+    "kind": "collectionType",
+    "collectionName": "locations",
+    "info": {
+        "singularName": "location",
+        "pluralName": "locations",
+        "displayName": "Location",
+        "description": "Workspace locations"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "name",
+            "required": true
+        },
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "subtitle": {
+            "type": "string"
+        },
+        "address": {
+            "type": "text",
+            "required": true
+        },
+        "travelTime": {
+            "type": "string"
+        },
+        "distance": {
+            "type": "string"
+        },
+        "hasPowerBackup": {
+            "type": "boolean",
+            "default": true
+        },
+        "seats": {
+            "type": "integer"
+        },
+        "metroDistance": {
+            "type": "string"
+        },
+        "latitude": {
+            "type": "float"
+        },
+        "longitude": {
+            "type": "float"
+        },
+        "featuredImage": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "gallery": {
+            "type": "media",
+            "multiple": true,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "amenities": {
+            "type": "json"
+        },
+        "tags": {
+            "type": "json"
+        },
+        "featured": {
+            "type": "boolean",
+            "default": false
+        },
+        "order": {
+            "type": "integer",
+            "default": 0
+        }
+    }
+}

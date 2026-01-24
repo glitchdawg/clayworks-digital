@@ -1,0 +1,66 @@
+{
+    "kind": "collectionType",
+    "collectionName": "job_listings",
+    "info": {
+        "singularName": "job-listing",
+        "pluralName": "job-listings",
+        "displayName": "Job Listing",
+        "description": "Career opportunities"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "title",
+            "required": true
+        },
+        "department": {
+            "type": "string",
+            "required": true
+        },
+        "location": {
+            "type": "string",
+            "required": true
+        },
+        "locationType": {
+            "type": "enumeration",
+            "enum": [
+                "on-site",
+                "remote",
+                "hybrid"
+            ],
+            "default": "on-site"
+        },
+        "description": {
+            "type": "text",
+            "required": true
+        },
+        "fullDescription": {
+            "type": "richtext"
+        },
+        "category": {
+            "type": "string"
+        },
+        "type": {
+            "type": "enumeration",
+            "enum": [
+                "Full-time",
+                "Part-time",
+                "Contract",
+                "Internship"
+            ],
+            "default": "Full-time"
+        },
+        "isActive": {
+            "type": "boolean",
+            "default": true
+        }
+    }
+}
