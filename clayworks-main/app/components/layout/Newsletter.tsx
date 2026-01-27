@@ -12,8 +12,8 @@ export interface NewsletterSectionProps {
 }
 
 export const NewsletterSection: React.FC<NewsletterSectionProps> = ({
-  title = "Stay Ahead of the Curve",
-  description = "Get fresh insights, expert tips, and the latest workspace trends delivered to your inbox every month.",
+  title = "Ideas, Insights, and Invitations",
+  description = "Updates on workspace thinking, sustainability, design ideas, and event invites. Zero spam, just relevance.",
   buttonText = "Subscribe Now",
   onSubscribe,
 }) => {

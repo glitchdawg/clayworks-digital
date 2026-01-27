@@ -244,10 +244,10 @@ const TestimonialsSection = ({ testimonials: strapiTestimonials = [] }: Testimon
               {/* Section Header */}
               <div className="text-center space-y-1 sm:space-y-[6px] lg:space-y-[8px]">
                 <p className="text-base font-normal leading-[20px] sm:leading-[22px] lg:leading-[24px] xl:leading-[28px] text-black uppercase tracking-wide">
-                  TESTIMONIALS
+                  CLIENT STORIES
                 </p>
                 <h2 className="text-3xl md:!text-3xl lg:!text-4xl font-semibold leading-[34px] sm:leading-[42px] lg:leading-[52px] xl:leading-[63px] text-[#2b2b2b] px-4">
-                  Workdays to Remember
+                  Workdays That Work Better
                 </h2>
               </div>
             </div>
@@ -445,7 +445,7 @@ const TestimonialsSection = ({ testimonials: strapiTestimonials = [] }: Testimon
             className="px-12 border-[#2C3E50] text-[#2C3E50]"
             onClick={handleReadAllStories}
           >
-            Read all stories
+            Read Client Stories
           </Button>
         </div>
       </div>

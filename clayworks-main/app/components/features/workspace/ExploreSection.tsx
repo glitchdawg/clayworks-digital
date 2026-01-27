@@ -26,8 +26,7 @@ export default function ExploreSection() {
             className="px-8 py-3 rounded-full text-white text-center font-medium text-sm"
             style={{ backgroundColor: "#00000080" }}
           >
-            Ready-to-use workspaces and meeting rooms designed for focus,
-            comfort, and collaboration.
+            Workspaces designed around people, not just productivity.
           </div>
         </div>
 
@@ -54,11 +53,10 @@ export default function ExploreSection() {
                   aria-selected={activeTab === tab}
                   aria-controls={`tabpanel-${tab.replace(/\s+/g, "-").toLowerCase()}`}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 rounded-full cursor-pointer font-medium text-sm transition-all duration-300 whitespace-nowrap min-h-[44px] min-w-[44px] flex items-center justify-center ${
-                    activeTab === tab
+                  className={`px-6 py-3 rounded-full cursor-pointer font-medium text-sm transition-all duration-300 whitespace-nowrap min-h-[44px] min-w-[44px] flex items-center justify-center ${activeTab === tab
                       ? "text-white shadow-lg transform -translate-y-0.5"
                       : "text-gray-700 hover:bg-gray-50"
-                  }`}
+                    }`}
                   style={
                     activeTab === tab ? { backgroundColor: "#575757" } : {}
                   }
@@ -123,11 +121,10 @@ export default function ExploreSection() {
                   <button
                     key={option}
                     onClick={() => setDayPass(option)}
-                    className={`flex-1 px-3 py-2 rounded-3xl font-medium text-xs transition-all duration-300 flex flex-col items-center justify-center relative ${
-                      dayPass === option
+                    className={`flex-1 px-3 py-2 rounded-3xl font-medium text-xs transition-all duration-300 flex flex-col items-center justify-center relative ${dayPass === option
                         ? "border border-orange-500 bg-white -m-px z-10"
                         : "border border-transparent bg-white"
-                    }`}
+                      }`}
                     style={{
                       borderColor:
                         dayPass === option ? "#E07B39" : "transparent",
@@ -222,7 +219,7 @@ export default function ExploreSection() {
                 boxShadow: "0px 15px 26px 0px rgba(0, 0, 0, 0.25)",
               }}
             >
-              Explore
+              Find Your Space
             </button>
           </div>
 
@@ -256,7 +253,7 @@ export default function ExploreSection() {
                 boxShadow: "0px 15px 26px 0px rgba(0, 0, 0, 0.25)",
               }}
             >
-              Explore
+              Find Your Space
             </button>
           </div>
         </div>

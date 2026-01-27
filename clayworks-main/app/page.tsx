@@ -102,9 +102,9 @@ export default async function Home() {
       <OurAdvantage />
       <WorkspacesSection />
       <CTASection
-        eyebrow="FREE KNOWLEDGE GUIDE"
-        title="Beyond Desks"
-        description="Your Essential Guide to Co-working and Custom Offices"
+        eyebrow="INSIGHTS FROM THE WORLD OF WORK"
+        title="Thinking Beyond the Desk"
+        description="Perspectives on workspace design, productivity, culture, and how environments shape the way teams work."
         image={{
           src: "/images/guide.png",
           alt: "Beyond Desks Revenue Guide",
@@ -126,20 +126,20 @@ export default async function Home() {
         imagePosition="left"
         imageSrc="/images/location.png"
         imageAlt="Location map"
-        eyebrow="LOCATIONS"
-        title="Strategically Located Where Business Happens"
-        description="From startups to enterprises, our flexible spaces grow with you — fully managed, beautifully designed, and ready to use."
+        eyebrow="OUR LOCATIONS"
+        title="Neighbourhood Workspaces Across Bengaluru"
+        description="Each Clayworks location is chosen to reduce commute stress, integrate with its neighbourhood, and support everyday work life."
         cards={locationCards}
-        ctaText="Read all stories"
-        ctaTextMobile="View All Locations"
+        ctaText="Read Client Stories"
+        ctaTextMobile="Explore All Locations"
         cardsOverlapImage={true}
       />
       <PartnersSection partners={partnersData} />
       <TestimonialsSection testimonials={testimonialsData} />
       <TourSection
-        sectionTitle="EXPLORE OUR SPACES"
-        heading="Experience the Future of Work"
-        description="Watch our short tour and explore how we redefine the workspace experience."
+        sectionTitle="Experience Humansense at Work"
+        heading="Thoughtfully designed environments"
+        description="Where work feels lighter, calmer, and more human. Watch our short tour and explore how we redefine the workspace experience."
         imageSrc="/images/modern.png"
         videoUrl="https://www.youtube.com/embed/abc123xyz"
         layout="right"

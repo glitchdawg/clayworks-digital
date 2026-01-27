@@ -83,90 +83,147 @@ export const faqCategories = [
     label: "General Info",
     faqs: [
       {
-        question:
-          'What does "Built-to-Suit" mean in the context of office spaces?',
+        question: "What is a managed office space?",
         answer:
-          "Built-to-Suit refers to a custom office space solution where we design and construct a workspace specifically tailored to your business needs, brand identity, and operational requirements. Unlike traditional leasing, every aspect is customized to fit your exact specifications.",
+          "A managed office space is a fully serviced workplace where infrastructure, operations, and daily management are handled by the provider, allowing businesses to focus entirely on growth and productivity.",
       },
       {
-        question:
-          "How is a Built-to-Suit office different from a managed or coworking space?",
+        question: "How is Clayworks different from coworking spaces?",
         answer:
-          "While coworking spaces offer shared amenities and managed offices provide ready-made solutions, Built-to-Suit offices are completely customized to your specifications. You get full control over design, layout, branding, and functionality, creating a unique workspace that reflects your company culture.",
+          "Unlike standard coworking, Clayworks offers fully managed, private, customizable offices designed for long-term teams, enterprise needs, and brand-aligned work environments.",
       },
       {
-        question:
-          "What is the typical timeline to deliver a Built-to-Suit office?",
+        question: "Is Clayworks suitable for startups and large enterprises?",
         answer:
-          "The timeline varies based on project scope and customization level, but typically ranges from 3-6 months. This includes site selection, design approval, construction, and final setup. We work closely with you throughout the process to ensure timely delivery.",
+          "Yes. Clayworks supports startups, scale-ups, enterprises, and global capability centers with flexible workspace solutions that scale as teams grow.",
       },
       {
-        question: "Can we choose the location for our Built-to-Suit office?",
+        question: "What does 'Humansense at Work' mean?",
         answer:
-          "Absolutely! We help you identify and evaluate potential locations based on your criteria such as accessibility, proximity to talent, business districts, and budget. Our team provides detailed analysis of each option to help you make an informed decision.",
+          "Humansense at Work is Clayworks' philosophy of designing workplaces that reduce friction, enhance well-being, and improve performance through thoughtful design, service, and location choices.",
       },
       {
-        question: "What level of customization is possible?",
+        question: "Why choose a design-led workspace?",
         answer:
-          "Complete customization is possible - from layout and interior design to furniture, technology infrastructure, and branding elements. You can customize everything including meeting rooms, breakout spaces, pantries, lighting, acoustics, and even sustainability features.",
+          "Design-led workspaces improve employee productivity, reduce stress, strengthen company culture, and enhance talent retention.",
       },
       {
-        question: "Are sustainability and wellness features included?",
+        question: "Is Clayworks good for hybrid work teams?",
         answer:
-          "Yes! We incorporate sustainable and wellness-focused features such as energy-efficient systems, natural lighting, air quality monitoring, ergonomic furniture, biophilic design elements, and green building certifications upon request.",
+          "Yes. Clayworks offices are designed to support hybrid teams with flexible layouts, meeting spaces, and collaboration zones.",
+      },
+      {
+        question: "Can Clayworks help reduce office management overhead?",
+        answer:
+          "Yes. Clayworks manages daily operations, allowing leadership teams to focus on business outcomes instead of facilities.",
+      },
+      {
+        question: "Does Clayworks offer sustainable office spaces?",
+        answer:
+          "Yes. Sustainability is core to Clayworks' design approach, with biophilic design, material reuse, and energy-efficient systems across locations.",
+      },
+      {
+        question: "How fast can I move into a Clayworks office?",
+        answer:
+          "Move-in timelines depend on customization requirements, but managed offices typically allow significantly faster occupancy than traditional leases.",
       },
     ],
   },
   {
     id: "sourcing",
-    label: "Sourcing",
+    label: "Sourcing & Discovery",
     faqs: [
       {
-        question: "How do you source locations for Built-to-Suit offices?",
+        question: "How can I find office space in Bengaluru through Clayworks?",
         answer:
-          "We use a rigorous selection process evaluating 20+ criteria including location accessibility, infrastructure, compliance, growth potential, and cost-effectiveness. Our network of property partners ensures you get the best options available.",
+          "You can explore Clayworks' office spaces across Bengaluru by contacting our team, requesting a proposal, or scheduling a guided site visit.",
       },
       {
-        question:
-          "Can we provide our own property for Built-to-Suit development?",
+        question: "Which Clayworks location is best for my business?",
         answer:
-          "Yes, if you already have a property in mind, we can assess its suitability and develop it according to your specifications. Our team will conduct due diligence and provide recommendations for optimization.",
+          "The ideal location depends on team size, commute patterns, growth plans, and budget. Clayworks helps evaluate these factors before recommending a suitable center.",
+      },
+      {
+        question: "Do you offer office spaces near metro stations?",
+        answer:
+          "Yes. Many Clayworks locations are strategically positioned near metro stations, major roads, and business hubs to reduce commute time.",
+      },
+      {
+        question: "Can Clayworks support rapid office expansion?",
+        answer:
+          "Yes. Our managed office model allows businesses to scale seats quickly without the delays of traditional leasing and fit-outs.",
+      },
+      {
+        question: "Do you help with space planning and layout design?",
+        answer:
+          "Yes. Clayworks assists with space planning, layout optimization, and workflow design as part of the onboarding process.",
       },
     ],
   },
   {
     id: "policies",
-    label: "Policies",
+    label: "Policies & Operations",
     faqs: [
       {
-        question: "What are the lease terms for Built-to-Suit offices?",
+        question: "What services are included in a managed office at Clayworks?",
         answer:
-          "Lease terms are flexible and tailored to your business needs. We offer various options from medium-term to long-term commitments, with scalability provisions built in to accommodate your growth.",
+          "Services typically include high-speed internet, power backup, housekeeping, security, facility management, and access control.",
       },
       {
-        question: "What happens if we need to scale up or down?",
+        question: "Are meeting rooms and common areas included?",
         answer:
-          "Our agreements include flexibility clauses that allow for expansion or contraction. We can reconfigure spaces, add modular units, or adjust your footprint as your team grows or changes.",
+          "Access to meeting rooms and shared amenities depends on the center and plan, and is clearly defined in the proposal.",
+      },
+      {
+        question: "Can companies brand their offices?",
+        answer:
+          "Yes. Branding, signage, and customized interiors are available for managed and built-to-suit offices.",
+      },
+      {
+        question: "What happens if my team size changes?",
+        answer:
+          "Clayworks offers flexible solutions to accommodate seat increases or workspace adjustments based on availability.",
+      },
+      {
+        question: "Is Clayworks compliant with safety and building norms?",
+        answer:
+          "Yes. All Clayworks centers adhere to applicable safety, building, and operational compliance standards.",
       },
     ],
   },
   {
     id: "payments",
-    label: "Payments",
+    label: "Payments & Commercials",
     faqs: [
       {
-        question: "How is pricing structured for Built-to-Suit offices?",
+        question: "How much does a managed office cost in Bengaluru?",
         answer:
-          "Pricing is transparent and customized based on your requirements including location, size, customization level, and lease duration. We provide detailed breakdowns covering construction, design, amenities, and ongoing operational costs.",
+          "Pricing varies by location, office size, tenure, and services. Clayworks provides transparent, per-seat pricing tailored to your needs.",
+      },
+      {
+        question: "What is included in the monthly rent?",
+        answer:
+          "Monthly pricing typically includes workspace usage, utilities, internet, housekeeping, security, and operational support.",
+      },
+      {
+        question: "Are there long-term lock-in requirements?",
+        answer:
+          "Lock-in periods vary by center and office type and are discussed clearly during proposal and agreement stages.",
       },
       {
         question: "Are there any hidden costs?",
         answer:
-          "No hidden costs. We provide complete transparency with all-inclusive pricing covering design, construction, furniture, technology setup, and facilities management. Any additional services are clearly outlined upfront.",
+          "No. All costs, inclusions, and optional add-ons are transparently shared before onboarding.",
+      },
+      {
+        question: "What payment options are available?",
+        answer:
+          "Payments are accepted through standard corporate payment methods as outlined in the commercial agreement.",
       },
     ],
   },
 ];
+
 
 export const caseStudiesData = [
   {
@@ -436,19 +493,19 @@ export const spaces = [
 export const principleCards = [
   {
     imageSrc: "/images/icons/stone.png",
-    title: "Bespoke and Tailored, Design-Led Spaces",
+    title: "Design That Reflects Your Work",
     description:
       "Every workspace is thoughtfully crafted to reflect your unique work culture while inspiring creativity and driving productivity.",
   },
   {
     imageSrc: "/images/icons/heart.png",
-    title: "Hospitality-Grade Service and Community",
+    title: "Service Built Around Your Day",
     description:
       "Enjoy five-star hospitality, top-tier amenities, and a collaborative, welcoming environment that supports productivity and growth",
   },
   {
     imageSrc: "/images/icons/ecofriendly.png",
-    title: "Sustainability and Well-being at the Core",
+    title: "Sustainability That Supports People and Planet",
     description:
       "Natural light, green spaces, and eco-friendly design prioritise team wellness while reducing environmental impact",
   },
@@ -485,14 +542,14 @@ export const impactStats = [
 export const leaders = [
   {
     name: "Rahul Singh",
-    title: "Co-Founder",
-    bio: "Rahul brings over two decades of experience in real estate and financial services. After completing his B.Tech from IIT Roorkee, he held senior positions at Infosys, Knight Frank India, and Essel Finance before co-founding ClayWorks. His expertise in capital markets and strategic planning has been instrumental in scaling ClayWorks from a startup to Bangalore's leading workspace provider.",
+    title: "Co-Founder & Director",
+    bio: "Rahul Singh anchors Clayworks with a deep understanding of real estate, finance, and long-term business strategy. With over two decades of experience, his work focuses on building systems that are resilient, transparent, and scalable. At Clayworks, Rahul oversees finance, strategy, HR, and sales, ensuring that growth is disciplined, sustainable, and aligned with the company's core values. He brings a calm, principled approach to decision-making, believing that strong businesses are built through clarity, trust, and consistency over time.",
     image: "/images/rahul.png",
   },
   {
-    name: "Abhijit Shashhar",
-    title: "Co-Founder",
-    bio: "Abhijit's background in office and asset management at Knight Frank, combined with his passion for sustainable design, drives ClayWorks' unique approach to workspace creation. He leads the company's design strategy and operational excellence initiatives, ensuring every ClayWorks center delivers an unparalleled experience.",
+    name: "Abhijith Shashidhar",
+    title: "Co-Founder & Director",
+    bio: "Abhijith Shashidhar leads Clayworks across design direction, projects, operations, marketing, and technology, working closely with architects, designers, and internal teams to translate ideas into real, functional workspaces. He brings a strong spatial sensibility and a hands-on approach to how workplaces are planned, executed, and experienced. His focus is on building environments that feel intuitive, age well, and support people without getting in their way.",
     image: "/images/abhijit.png",
   },
 ];

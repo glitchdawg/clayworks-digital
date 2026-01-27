@@ -68,11 +68,11 @@ export function WorkspacesSection() {
     },
     {
       image: "/images/servicecard3.jpg",
-      title: "Premium Conference Rooms",
+      title: "Meeting Spaces That Respect Your Time",
       description:
-        "Drop in for a productive workday in a beautiful co-working space",
-      features: ["Plug and play setup", "Catering", "+6 amenities"],
-      buttonText: "Reserve Meeting Room",
+        "Thoughtfully designed meeting rooms with reliable technology, acoustic comfort, and attentive support.",
+      features: ["Seamless setup", "On-demand support", "Hospitality-led service"],
+      buttonText: "Book a Meeting Space",
     },
     {
       image: "/images/servicecard4.png",
@@ -93,15 +93,15 @@ export function WorkspacesSection() {
           {/* Header - Left Side (30%) */}
           <div className="col-span-4 flex flex-col justify-base space-y-2">
             <p className="text-base font-inter-normal text-black uppercase tracking-wider mb-1">
-              OUR SERVICES
+              WHAT WE OFFER
             </p>
             <h2 className="text-3xl md:!text-3xl lg:!text-4xl font-medium font-inter-medium text-[#2B2B2B] leading-tight">
-              Workspaces
+              Workspaces Designed
               <br />
-              That Fit You
+              Around Your Team
             </h2>
             <p className="text-[#333336] max-w-72 font-inter-normal mx-auto md:mx-0">
-              Choose the kind of space that matches your need, style, and goals.
+              Whether you're a growing startup or a global team, our spaces are designed to adapt to your way of working, not the other way around.
             </p>
           </div>
 
@@ -123,13 +123,13 @@ export function WorkspacesSection() {
       <div className="lg:hidden pl-4 md:px-6">
         <div className="mb-8 text-center space-y-2">
           <p className="text-base font-inter-normal text-black uppercase tracking-wider">
-            OUR SERVICES
+            WHAT WE OFFER
           </p>
           <h2 className=" !text-[#2B2B2B] font-inter-medium md:!text-[52px] text-[32px] leading-tight">
-            Workspaces <br /> That Fit You
+            Workspaces Designed <br /> Around Your Team
           </h2>
           <p className="text-[#333336] max-w-72 font-inter-normal mx-auto md:mx-0">
-            Choose the kind of space that matches your need, style, and goals.
+            Whether you're a growing startup or a global team, our spaces adapt to your way of working.
           </p>
         </div>
 

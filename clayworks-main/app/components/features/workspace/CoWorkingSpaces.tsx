@@ -72,10 +72,10 @@ export default function CoWorkingSpaces() {
       {/* Section Header */}
       <div className="text-center mb-6 lg:mb-12">
         <p className="text-base font-inter-normal text-black uppercase tracking-wider mb-1">
-          CO-WORKING SPACES
+          OUR SPACES
         </p>
         <h2 className="text-3xl md:!text-3xl lg:!text-4xl font-medium font-inter-medium text-[#2B2B2B]">
-          Our Most Featured
+          Spaces That Reflect How You Work
         </h2>
       </div>
       <div className="container mx-auto">

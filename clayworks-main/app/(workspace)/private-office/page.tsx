@@ -278,9 +278,9 @@ const PrivateOfficePage = async () => {
       />
       <TestimonialsSection testimonials={testimonialsData} />
       <CTASection
-        eyebrow="FREE KNOWLEDGE GUIDE"
-        title="Beyond Desks"
-        description="Your Essential Guide to Co-working and Custom Offices"
+        eyebrow="INSIGHTS FROM THE WORLD OF WORK"
+        title="Thinking Beyond the Desk"
+        description="Perspectives on workspace design, productivity, culture, and how environments shape the way teams work."
         image={{
           src: "/images/guide.png",
           alt: "Beyond Desks Revenue Guide",

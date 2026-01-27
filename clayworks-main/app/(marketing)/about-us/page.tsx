@@ -122,20 +122,20 @@ const AboutUsPage = async () => {
             alt: "Day Pass Workspace",
           }}
           layout="image-right"
-          badge="ABOUT US"
-          title="Crafting the Future of Workspaces"
-          description="We are a team of passionate professionals who are dedicated to providing the best workspace solutions for our clients."
+          badge="About Clayworks"
+          title="Human-Centric Workspaces Built for People"
+          description="At Clayworks, we exist to enrich how work feels, every day. We build and operate premium, flexible, and sustainable workspaces that help teams do their best work — not just be productive, but be purposeful."
         />
       </div>
       <PrincipleSection
         eyebrow="OUR PRINCIPLE"
-        title="We believe that the right environment sparks extraordinary outcomes."
-        description="Where you work should ignite ideas, foster well-being, and fuel collaboration. Our Workspace as an Experience™ philosophy means every centre is intentionally designed, hospitality-driven, and empowered with flexibility."
+        title="We believe workspaces should do more than house work — they should elevate it."
+        description="Great work begins with spaces that care for people first — thoughtfully designed, naturally inviting, intuitively supported, and rooted in well-being. Our HumanSense at Work philosophy places empathy at the center of every environment we create."
         cards={principleCards}
       />
       <WhyChooseUsSection
-        eyebrow="WHY CHOOSE US"
-        title="Purpose-Built, Performance-Driven"
+        eyebrow="WHY CLAYWORKS"
+        title="Why Clayworks"
         imageSrc="/images/meeting.jpg"
         imageAlt="Office workspace"
         imagePosition="left"
@@ -205,12 +205,12 @@ const AboutUsPage = async () => {
         imagePosition="left"
         imageSrc="/images/location.png"
         imageAlt="Location map"
-        eyebrow="LOCATIONS"
-        title="Strategically Located Where Business Happens"
-        description="From startups to enterprises, our flexible spaces grow with you — fully managed, beautifully designed, and ready to use."
+        eyebrow="WHERE WE'RE LOCATED"
+        title="Neighbourhood Workspaces Across Bengaluru"
+        description="Each Clayworks location is chosen to reduce commute stress, integrate with its neighbourhood, and support everyday work life."
         cards={locationCards}
-        ctaText="Read all stories"
-        ctaTextMobile="View All Locations"
+        ctaText="Read Client Stories"
+        ctaTextMobile="Explore All Locations"
         cardsOverlapImage={true}
       />
       <ContactUs />

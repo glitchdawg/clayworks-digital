@@ -93,10 +93,10 @@ const PartnersSection = ({ partners: strapiPartners = [] }: PartnersSectionProps
         {/* Header */}
         <div className="text-center mb-6 lg:mb-12 space-y-3">
           <p className="text-base font-inter-medium text-black uppercase tracking-wider mb-1">
-            OUR PARTNERS
+            TRUSTED BY TEAMS WHO CARE ABOUT HOW THEY WORK
           </p>
           <h2 className="text-3xl md:!text-3xl lg:!text-4xl font-medium font-inter-medium text-[#2B2B2B] leading-tight">
-            Trusted by Teams That Scale
+            From early-stage startups to global enterprises, teams choose Clayworks for reliability, design integrity, and people-first service.
           </h2>
         </div>
 

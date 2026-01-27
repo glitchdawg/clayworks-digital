@@ -10,13 +10,13 @@ interface AdvantageCard {
 const advantages: AdvantageCard[] = [
   {
     icon: <Icon icon="clarity:design-line" className="w-8 h-8" />,
-    title: "Design-First Spaces",
+    title: "Design That Serves Work",
     description:
       "Earthy materials, biophilic interiors, and layouts crafted for focus and flow.",
   },
   {
     icon: <Icon icon="hugeicons:leaf-01" className="w-8 h-8" />,
-    title: "Sustainable Ethos",
+    title: "Sustainability, Practiced",
     description:
       "Built with reclaimed materials, natural light, and low-footprint operations.",
   },
@@ -27,13 +27,13 @@ const advantages: AdvantageCard[] = [
         className="w-8 h-8"
       />
     ),
-    title: "Concierge-Level Service",
+    title: "People-First Operations",
     description:
       "On-ground teams that offer real-time assistance—no tickets, just people.",
   },
   {
     icon: <Icon icon="solar:scale-outline" className="w-8 h-8" />,
-    title: "Scalable Setup",
+    title: "Built to Scale With You",
     description:
       "Flexible lease terms and adaptable setups to match your evolving needs.",
   },
@@ -47,14 +47,13 @@ export function OurAdvantage() {
         <div className="container mx-auto">
           <div className="text-center md:text-left mb-8 md:mb-12 space-y-2">
             <p className="text-base font-inter-normal text-black uppercase tracking-wider mb-1">
-              Values
+              WHY CLAYWORKS
             </p>
             <h2 className="text-3xl md:!text-3xl lg:!text-4xl font-medium font-inter-medium text-[#2B2B2B]">
-              Our Advantage
+              What Makes Our Workspaces Different
             </h2>
             <p className="text-[#333336] max-w-xl font-inter-normal mx-auto md:mx-0">
-              We don't just provide workspaces—we curate experiences. Here's how
-              we go beyond the ordinary.
+              We don't believe offices should be generic containers for work. We design environments that reduce friction, support focus, and quietly improve everyday work life.
             </p>
           </div>
         </div>
